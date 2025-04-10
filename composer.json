@@ -18,7 +18,8 @@
         "nyholm/psr7-server": "^1.1",
         "php-di/php-di": "^7",
         "selective/basepath": "^2",
-        "slim/slim": "^4"
+        "slim/slim": "^4",
+        "slim/twig-view": "^3.4"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3",

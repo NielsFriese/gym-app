@@ -17,6 +17,7 @@ use Selective\BasePath\BasePathMiddleware;
 use Slim\App;
 use Slim\Factory\AppFactory;
 use Slim\Interfaces\RouteParserInterface;
+use Slim\Views\Twig;
 
 return [
     // Application settings
@@ -86,5 +87,37 @@ return [
             $container->get(LoggerInterface::class),
             (bool)$settings['display_error_details'],
         );
+    },
+
+    //Twig-Service global registrieren, damit es in jedem template verfügbar ist.
+    Twig::class => function (ContainerInterface $container): Twig {
+        $settings = $container->get('settings');
+        $twigSettings = [
+            'cache' => false,
+            'debug' => true,
+            'auto_reload' => true,
+        ];
+
+        return Twig::create(__DIR__ . '/../templates', $twigSettings);
+    },
+
+    // PDO Instanz
+    PDO::class => function (ContainerInterface $container) {
+        $settings = $container->get('settings')['db'];
+
+        $dsn = sprintf(
+            'mysql:host=%s;dbname=%s;charset=%s',
+            $settings['host'],
+            $settings['database'],
+            $settings['charset']
+        );
+
+        $options = [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ];
+
+        return new PDO($dsn, $settings['username'], $settings['password'], $options);
     },
 ];

@@ -1,0 +1,17 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    
+    <div class="card">
+        <div class="card-header">
+            {{ mitglied.vorname }} {{ mitglied.nachname }}
+        </div>
+        <div class="card-body">
+            <p><strong>Email:</strong> {{ mitglied.email }}</p>
+            <p><strong>Geburtsdatum:</strong> {{ mitglied.geburtsdatum }}</p>
+            <p><strong>Beitrittsdatum:</strong> {{ mitglied.beitrittsdatum }}</p>
+            <p><strong>Mitgliedschaft:</strong> {{ mitglied.mitgliedschaft_typ }}</p>
+        </div>
+    </div>
+{% endblock %}

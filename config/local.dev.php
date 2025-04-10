@@ -11,7 +11,7 @@ return function (array $settings): array {
     $settings['error']['display_error_details'] = true;
 
     // Database
-    $settings['db']['database'] = 'slim_skeleton_dev';
+    $settings['db']['database'] = 'gym';
 
     return $settings;
 };

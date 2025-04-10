@@ -1,0 +1,11 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <div class="jumbotron">
+        <h1>{{ message }}</h1>
+        <p class="lead">Verwalten Sie Ihre Mitglieder, Kurse und Trainingseinheiten.</p>
+        <hr class="my-4">
+        <p>Klicken Sie unten, um mit der Mitgliederverwaltung zu beginnen.</p>
+        <a class="btn btn-primary btn-lg" href="{{ url_for('mitglieder-liste') }}" role="button">Mitglieder verwalten</a>
+    </div>
+{% endblock %}

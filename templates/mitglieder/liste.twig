@@ -1,0 +1,38 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+
+
+
+    {% if mitglieder|length > 0 %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Mitgliedschaft</th>
+                <th>Aktionen</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            {% for mitglied in mitglieder %}
+                <tr>
+                    <td>{{ mitglied.mitglied_id }}</td>
+                    <td>{{ mitglied.vorname }} {{ mitglied.nachname }}</td>
+                    <td>{{ mitglied.email }}</td>
+                    <td>{{ mitglied.mitgliedschaft_typ }}</td>
+                    <td>{{ mitglied.beitrittsdatum }}</td>
+                    <td>
+                        <a href="{{ url_for('mitglied-details', {'id': mitglied.mitglied_id}) }}" class="btn btn-sm btn-info">Details</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">Keine Mitglieder gefunden.</div>
+    {% endif %}
+{% endblock %}

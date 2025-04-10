@@ -13,6 +13,15 @@ $configFiles = [
     __DIR__ . '/../../env.php',
 ];
 
+$settings['db'] = [
+    'host' => 'localhost',
+    'username' => 'root',
+    'password' => '',
+    'database' => 'gym',
+    'charset' => 'utf8mb4',
+    'collation' => 'utf8mb4_unicode_ci',
+]; 
+
 foreach ($configFiles as $configFile) {
     if (!file_exists($configFile)) {
         continue;
