@@ -2,23 +2,23 @@
 
 namespace App\Action\Home;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Views\Twig;
 
-final class HomeAction
+class HomeAction
 {
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    private Twig $view;
+
+    public function __construct(Twig $view)
     {
-        $wert = $this->nielsNamenHoler();
-
-        $response->getBody()->write($wert);
-
-        return $response;
+        $this->view = $view;
     }
 
-    private function nielsNamenHoler() :string
+    public function __invoke(Request $request, Response $response): Response
     {
-        return 'Hallo Niels';
+        return $this->view->render($response, 'home.twig', [
+            'message' => 'Willkommen im Fitnessstudio-Verwaltungssystem'
+        ]);
     }
 }

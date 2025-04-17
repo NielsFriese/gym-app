@@ -24,7 +24,6 @@
                     <td>{{ mitglied.vorname }} {{ mitglied.nachname }}</td>
                     <td>{{ mitglied.email }}</td>
                     <td>{{ mitglied.mitgliedschaft_typ }}</td>
-                    <td>{{ mitglied.beitrittsdatum }}</td>
                     <td>
                         <a href="{{ url_for('mitglied-details', {'id': mitglied.mitglied_id}) }}" class="btn btn-sm btn-info">Details</a>
                     </td>

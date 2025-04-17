@@ -1,0 +1,34 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <h1>{{ titel }}</h1>
+
+    {% if kurse|length > 0 %}
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Kursname</th>
+                <th>Beschreibung</th>
+                <th>Max. Kapazität</th>
+                <th>Aktionen</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for kurs in kurse %}
+                <tr>
+                    <td>{{ kurs.kurs_id }}</td>
+                    <td>{{ kurs.kursname }}</td>
+                    <td>{{ kurs.beschreibung }}</td>
+                    <td>{{ kurs.max_kapazitaet }}</td>
+                <td>
+                    <a href="" class="btn btn-sm btn-info">Details</a>
+                </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">Keine Kurse gefunden.</div>
+    {% endif %}
+{% endblock %}
