@@ -3,6 +3,7 @@
 {% block content %}
     <h1>{{ title }}</h1>
 
+    <a href="{{ url_for('mitglied-erstellen') }}" class="btn btn-primary mb-3">Neues Mitglied</a>
 
 
     {% if mitglieder|length > 0 %}

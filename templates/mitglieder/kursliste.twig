@@ -2,6 +2,7 @@
 
 {% block content %}
     <h1>{{ titel }}</h1>
+    <a href="{{ url_for('kurse-erstellen') }}" class="btn btn-primary mb-3">Neuer Kurs</a>
 
     {% if kurse|length > 0 %}
         <table class="table table-striped">

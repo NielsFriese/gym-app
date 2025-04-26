@@ -5,9 +5,10 @@ namespace App\Action\Mitglied;
 use App\Domain\Mitglied\MitgliedRepository;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Slim\Routing\RouteContext;
 use Slim\Views\Twig;
 
-final class MitgliedDetailsAction
+final class MitgliedLoeschenAction
 {
     private MitgliedRepository $mitgliedRepo;
 
@@ -19,16 +20,13 @@ final class MitgliedDetailsAction
         $this->view = $twig;
     }
 
+
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args): ResponseInterface
     {
         $mitgliedId = (int)$args['id']; 
-        $mitglied = $this->mitgliedRepo->findById($mitgliedId);
 
-        $data = [
-            'mitglied' => $mitglied,
-            'titel' => 'Mitglied Details',
-        ];
+        $erfolg = $this->mitgliedRepo->delete($mitgliedId);
 
-        return $this->view->render($response, 'mitglieder/details.twig', $data);
+        
     }
 }

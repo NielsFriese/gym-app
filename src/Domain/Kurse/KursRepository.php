@@ -33,5 +33,21 @@ class KursRepository
 
         return $kurs;
     }
+    
+    public function create(array $formularDaten): int
+    {
+        $sql = "INSERT INTO kurse (kursname, beschreibung, max_kapazitaet, trainer_id)
+            VALUES (:kursname, :beschreibung, :max_kapazitaet, :trainer_id)";
+        $query = $this->pdo->prepare($sql);
+        $query->bindParam(':kursname', $formularDaten['kursname']);
+        $query->bindParam(':beschreibung', $formularDaten['beschreibung']);
+        $query->bindParam(':max_kapazitaet', $formularDaten['max_kapazitaet']);
+        $query->bindParam(':trainer_id', $formularDaten['trainer_id']);
 
+        
+ 
+        $query->execute();
+ 
+        return (int)$this->pdo->lastInsertId();
+    }
 }

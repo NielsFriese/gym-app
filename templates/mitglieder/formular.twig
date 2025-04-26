@@ -1,0 +1,39 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+
+    <form method="post" action="{{ formAction }}">
+        <div class="form-group mb-3">
+            <label for="vorname">Vorname</label>
+            <input type="text" class="form-control" id="vorname" name="vorname" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="nachname">Nachname</label>
+            <input type="text" class="form-control" id="nachname" name="nachname" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="geburtsdatum">Geburtsdatum</label>
+            <input type="date" class="form-control" id="geburtsdatum" name="geburtsdatum" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="mitgliedschaft_typ">Mitgliedschaft</label>
+            <select class="form-control" id="mitgliedschaft_typ" name="mitgliedschaft_typ" required>
+                {% for typ in mitgliedschaftsTypen %}
+                    <option value="{{ typ }}">{{ typ }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Speichern</button>
+        <a href="{{ url_for('mitglieder-liste') }}" class="btn btn-secondary">Abbrechen</a>
+    </form>
+{% endblock %}

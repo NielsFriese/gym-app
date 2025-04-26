@@ -1,0 +1,31 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+
+    <form method="post" action="{{ formAction }}">
+        <div class="form-group mb-3">
+            <label for="kursname">Kursname</label>
+            <input type="text" class="form-control" id="kursname" name="kursname" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="beschreibung">Kursbeschreibung</label>
+            <input type="text" class="form-control" id="beschreibung" name="beschreibung" required>
+        </div>
+
+        <div class="form-group mb-3">
+            <label for="max_kapazitaet">max_kapazitaet</label>
+            <input type="text" class="form-control" id="max_kapazitaet" name="max_kapazitaet" required>
+        </div>
+        
+        <div class="form-group mb-3">
+            <label for="trainer_id">Trainer_id</label>
+            <input type="text" class="form-control" id="trainer_id" name="trainer_id" required>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">Speichern</button>
+        <a href="{{ url_for('kurse-liste') }}" class="btn btn-secondary">Abbrechen</a>
+    </form>
+{% endblock %}

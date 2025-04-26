@@ -34,4 +34,29 @@ class MitgliedRepository
         return $mitglied;
     }
 
+   public function create(array $formularDaten): int
+   {
+       $sql = "INSERT INTO mitglieder (vorname, nachname, email, geburtsdatum, beitrittsdatum, mitgliedschaft_typ)
+           VALUES (:vorname, :nachname, :email, :geburtsdatum, :beitrittsdatum, :mitgliedschaft_typ)";
+       $query = $this->pdo->prepare($sql);
+       $query->bindParam(':vorname', $formularDaten['vorname']);
+       $query->bindParam(':nachname', $formularDaten['nachname']);
+       $query->bindParam(':email', $formularDaten['email']);
+       $query->bindParam(':geburtsdatum', $formularDaten['geburtsdatum']);
+       $query->bindParam(':beitrittsdatum', $formularDaten['beitrittsdatum']);
+       $query->bindParam(':mitgliedschaft_typ', $formularDaten['mitgliedschaft_typ']);
+
+       $query->execute();
+
+       return (int)$this->pdo->lastInsertId();
+   }
+
+    public function delete(int $mitgliederId): bool
+    {
+        $sql = "DELETE FROM mitglieder WHERE mitglied_id = :id";
+        $query = $this->pdo->prepare($sql);
+        $query->bindParam(':id', $id, PDO::PARAM_INT);
+
+        return $query->execute();
+    }
 }
