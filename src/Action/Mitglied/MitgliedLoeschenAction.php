@@ -27,6 +27,24 @@ final class MitgliedLoeschenAction
 
         $erfolg = $this->mitgliedRepo->delete($mitgliedId);
 
+        if ($erfolg) {
+            // Erfolgreiche Löschung, Umleitung zur Mitgliederliste
+            // Sie müssten den Slim Router verwenden, um den Pfad zu generieren
+            $routeContext = RouteContext::fromRequest($request);
+            $url = $routeContext->getRouteParser()->urlFor('mitglieder-liste'); // Beispiel-Route-Name
+            return $response->withHeader('Location', $url)->withStatus(302);
+        } 
+        
+        else {
+
+             $data = [
+            'erfolg' => false,
+            'titel' => 'Fehler beim Löschen des Mitglieds',
+            'nachricht' => 'Das Mitglied mit der ID **' . $mitgliedId . '** konnte nicht gelöscht werden. Es existiert möglicherweise nicht oder es ist ein interner Fehler aufgetreten.',
+            ];
+        }
+        
+        return $this->view->render($response->withStatus(404), 'mitglieder/loeschen.twig', $data);
         
     }
 }

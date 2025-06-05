@@ -28,6 +28,8 @@ final class MitgliedErstellenAction
             'title' => 'Neues Mitglied erstellen',
             'formAction' => $routeParser->urlFor('mitglied-erstellen-submit'),
             'mitgliedschaftsTypen' => ['Basis', 'Premium', 'VIP'],
+            'mitglied' => [], // Leeres Array für den Erstellen-Modus
+            'isEditMode' => false, // Explizit setzen
         ];
 
         return $this->view->render($response, 'mitglieder/formular.twig', $data);

@@ -1,39 +1,55 @@
+{# templates/mitglieder/formular.twig #}
 {% extends "layout.twig" %}
 
 {% block content %}
     <h1>{{ title }}</h1>
 
-    <form method="post" action="{{ formAction }}">
-        <div class="form-group mb-3">
-            <label for="vorname">Vorname</label>
-            <input type="text" class="form-control" id="vorname" name="vorname" required>
+ 
+
+
+    <form action="{{ formAction }}" method="POST">
+        <div class="mb-3">
+            <label for="vorname" class="form-label">Vorname</label>
+            <input type="text" class="form-control" id="vorname" name="vorname" value="{{ mitglied.vorname | default('') }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="nachname" class="form-label">Nachname</label>
+            <input type="text" class="form-control" id="nachname" name="nachname" value="{{ mitglied.nachname | default('') }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" value="{{ mitglied.email | default('') }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="geburtsdatum" class="form-label">Geburtsdatum</label>
+            <input type="date" class="form-control" id="geburtsdatum" name="geburtsdatum" value="{{ mitglied.geburtsdatum | default('') }}" required>
         </div>
 
-        <div class="form-group mb-3">
-            <label for="nachname">Nachname</label>
-            <input type="text" class="form-control" id="nachname" name="nachname" required>
+        {# Das Beitrittsdatum wird normalerweise beim Erstellen gesetzt und nicht geändert. 
+           Wenn du es im Bearbeitungsmodus anzeigen (aber nicht bearbeiten) möchtest: #}
+        {% if isEditMode and mitglied.beitrittsdatum %}
+        <div class="mb-3">
+            <label for="beitrittsdatum_display" class="form-label">Beitrittsdatum (nicht änderbar)</label>
+            <input type="text" class="form-control" id="beitrittsdatum_display" value="{{ mitglied.beitrittsdatum }}" readonly>
         </div>
+        {% endif %}
 
-        <div class="form-group mb-3">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-        </div>
-
-        <div class="form-group mb-3">
-            <label for="geburtsdatum">Geburtsdatum</label>
-            <input type="date" class="form-control" id="geburtsdatum" name="geburtsdatum" required>
-        </div>
-
-        <div class="form-group mb-3">
-            <label for="mitgliedschaft_typ">Mitgliedschaft</label>
-            <select class="form-control" id="mitgliedschaft_typ" name="mitgliedschaft_typ" required>
+        <div class="mb-3">
+            <label for="mitgliedschaft_typ" class="form-label">Mitgliedschaftstyp</label>
+            <select class="form-select" id="mitgliedschaft_typ" name="mitgliedschaft_typ" required>
                 {% for typ in mitgliedschaftsTypen %}
-                    <option value="{{ typ }}">{{ typ }}</option>
+                    <option value="{{ typ }}" {{ mitglied.mitgliedschaft_typ == typ ? 'selected' : '' }}>{{ typ }}</option>
                 {% endfor %}
             </select>
         </div>
 
-        <button type="submit" class="btn btn-primary">Speichern</button>
-        <a href="{{ url_for('mitglieder-liste') }}" class="btn btn-secondary">Abbrechen</a>
+        <button type="submit" class="btn btn-success">
+            {% if isEditMode %}
+                Änderungen speichern
+            {% else %}
+                Mitglied erstellen
+            {% endif %}
+        </button>
+        <a href="{{ url_for(isEditMode ? 'mitglied-details' : 'mitglieder-liste', isEditMode ? {'id': mitglied.mitglied_id} : {}) }}" class="btn btn-secondary">Abbrechen</a>
     </form>
 {% endblock %}

@@ -4,8 +4,7 @@
     <h1>{{ title }}</h1>
 
     <a href="{{ url_for('mitglied-erstellen') }}" class="btn btn-primary mb-3">Neues Mitglied</a>
-
-
+    
     {% if mitglieder|length > 0 %}
         <table class="table table-striped">
             <thead>
@@ -15,7 +14,6 @@
                 <th>Email</th>
                 <th>Mitgliedschaft</th>
                 <th>Aktionen</th>
-
             </tr>
             </thead>
             <tbody>
@@ -27,6 +25,11 @@
                     <td>{{ mitglied.mitgliedschaft_typ }}</td>
                     <td>
                         <a href="{{ url_for('mitglied-details', {'id': mitglied.mitglied_id}) }}" class="btn btn-sm btn-info">Details</a>
+                        <a href="{{ url_for('mitglied-info-anzeigen', {'id': mitglied.mitglied_id}) }}" class="btn btn-sm btn-outline-info">Infos</a>
+                        <a href="{{ url_for('mitglied-info-erstellen', {'id': mitglied.mitglied_id}) }}" class="btn btn-sm btn-info" >infos Erstellen</a>
+                        <a href="{{ url_for('mitglied-loeschen', {'id': mitglied.mitglied_id}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Möchten Sie dieses Mitglied wirklich löschen?');">Löschen</a>
+
+ 
                     </td>
                 </tr>
             {% endfor %}

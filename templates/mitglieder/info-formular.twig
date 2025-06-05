@@ -1,0 +1,433 @@
+{# templates/mitglieder/info-formular.twig #}
+{% extends "layout.twig" %}
+
+{% block content %}
+<style>
+.form-container {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+}
+
+.form-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    overflow: hidden;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.form-header {
+    background: linear-gradient(135deg, #2d3748, #4a5568);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.form-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.form-subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-top: 0.5rem;
+}
+
+.form-body {
+    padding: 2.5rem;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    position: relative;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.form-control-custom {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.form-control-custom:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.form-control-custom:hover {
+    border-color: #cbd5e0;
+    background: white;
+}
+
+.input-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+    font-size: 1.1rem;
+    pointer-events: none;
+}
+
+.form-group.has-icon .form-control-custom {
+    padding-right: 3rem;
+}
+
+.gender-options {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.gender-option {
+    flex: 1;
+    min-width: 120px;
+}
+
+.gender-radio {
+    display: none;
+}
+
+.gender-label {
+    display: block;
+    padding: 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    font-weight: 500;
+}
+
+.gender-radio:checked + .gender-label {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.gender-label:hover {
+    border-color: #cbd5e0;
+    background: white;
+}
+
+.gender-radio:checked + .gender-label:hover {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.textarea-group {
+    grid-column: 1 / -1;
+}
+
+.form-textarea {
+    min-height: 120px;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.error-alert {
+    background: linear-gradient(135deg, #fed7d7, #feb2b2);
+    border: 1px solid #fc8181;
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    color: #742a2a;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-submit {
+    background: linear-gradient(45deg, #48bb78, #38a169);
+    border: none;
+    border-radius: 25px;
+    padding: 1rem 2.5rem;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-submit:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(72, 187, 120, 0.4);
+}
+
+.btn-cancel {
+    background: linear-gradient(45deg, #a0aec0, #718096);
+    border: none;
+    border-radius: 25px;
+    padding: 1rem 2rem;
+    color: white;
+    font-weight: 600;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-cancel:hover {
+    transform: translateY(-2px);
+    color: white;
+    text-decoration: none;
+}
+
+.member-info {
+    background: linear-gradient(135deg, #bee3f8, #90cdf4);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-left: 4px solid #3182ce;
+}
+
+.member-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2a4365;
+    margin: 0;
+}
+
+.member-details {
+    color: #2c5282;
+    margin: 0.5rem 0 0 0;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .form-container {
+        padding: 1rem;
+    }
+    
+    .form-body {
+        padding: 1.5rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .gender-options {
+        flex-direction: column;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn-submit, .btn-cancel {
+        width: 100%;
+        max-width: 300px;
+        justify-content: center;
+    }
+}
+</style>
+
+<div class="form-container">
+    <div class="container">
+        <div class="form-card">
+            <div class="form-header">
+                <h1 class="form-title">
+                    <i class="fas fa-edit me-2"></i>
+                    {% if isEditMode %}
+                        Informationen bearbeiten
+                    {% else %}
+                        Informationen hinzufügen
+                    {% endif %}
+                </h1>
+                <p class="form-subtitle">Zusätzliche Mitgliedsinformationen verwalten</p>
+            </div>
+            
+            <div class="form-body">
+                {% if mitglied %}
+                    <div class="member-info">
+                        <h3 class="member-name">
+                            <i class="fas fa-user me-2"></i>
+                            {{ mitglied.vorname }} {{ mitglied.nachname }}
+                        </h3>
+                        <p class="member-details">
+                            <i class="fas fa-envelope me-1"></i>{{ mitglied.email }} | 
+                            <i class="fas fa-id-card me-1"></i>ID: {{ mitglied.mitglied_id }}
+                        </p>
+                    </div>
+                {% endif %}
+
+                {% if error %}
+                    <div class="error-alert">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                <form method="post" action="{{ formAction }}">
+                    <div class="form-grid">
+                        <div class="form-group has-icon">
+                            <label for="gewicht" class="form-label">
+                                <i class="fas fa-weight-hanging me-1"></i>Gewicht
+                            </label>
+                            <input 
+                                type="number" 
+                                step="0.1" 
+                                min="0" 
+                                max="500"
+                                id="gewicht" 
+                                name="gewicht" 
+                                class="form-control-custom"
+                                placeholder="z.B. 75.5"
+                                value="{% if formData.gewicht is defined %}{{ formData.gewicht }}{% elseif mitglied.gewicht %}{{ mitglied.gewicht }}{% endif %}"
+                            >
+                            <i class="input-icon fas fa-weight"></i>
+                        </div>
+
+                        <div class="form-group has-icon">
+                            <label for="groesse" class="form-label">
+                                <i class="fas fa-ruler-vertical me-1"></i>Körpergröße
+                            </label>
+                            <input 
+                                type="number" 
+                                step="0.1" 
+                                min="0" 
+                                max="250"
+                                id="groesse" 
+                                name="groesse" 
+                                class="form-control-custom"
+                                placeholder="z.B. 175.5"
+                                value="{% if formData.groesse is defined %}{{ formData.groesse }}{% elseif mitglied.groesse %}{{ mitglied.groesse }}{% endif %}"
+                            >
+                            <i class="input-icon fas fa-ruler-vertical"></i>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-venus-mars me-1"></i>Geschlecht
+                            </label>
+                            <div class="gender-options">
+                                {% for option in geschlechterOptionen %}
+                                    <div class="gender-option">
+                                        <input 
+                                            type="radio" 
+                                            id="geschlecht_{{ option.value }}" 
+                                            name="geschlecht" 
+                                            value="{{ option.value }}" 
+                                            class="gender-radio"
+                                            {% if (formData.geschlecht is defined and formData.geschlecht == option.value) or (formData.geschlecht is not defined and mitglied.geschlecht == option.value) %}checked{% endif %}
+                                        >
+                                        <label for="geschlecht_{{ option.value }}" class="gender-label">
+                                            {% if option.value == 'm' %}
+                                                <i class="fas fa-mars me-1"></i>
+                                            {% elseif option.value == 'w' %}
+                                                <i class="fas fa-venus me-1"></i>
+                                            {% else %}
+                                                <i class="fas fa-genderless me-1"></i>
+                                            {% endif %}
+                                            {{ option.label }}
+                                        </label>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="form-group has-icon">
+                            <label for="max_kraft" class="form-label">
+                                <i class="fas fa-dumbbell me-1"></i>Maximale Kraft
+                            </label>
+                            <input 
+                                type="number" 
+                                step="0.1" 
+                                min="0" 
+                                max="1000"
+                                id="max_kraft" 
+                                name="max_kraft" 
+                                class="form-control-custom"
+                                placeholder="z.B. 120.5"
+                                value="{% if formData.max_kraft is defined %}{{ formData.max_kraft }}{% elseif mitglied.max_kraft %}{{ mitglied.max_kraft }}{% endif %}"
+                            >
+                            <i class="input-icon fas fa-dumbbell"></i>
+                        </div>
+
+                        <div class="form-group textarea-group">
+                            <label for="weitere_informationen" class="form-label">
+                                <i class="fas fa-sticky-note me-1"></i>Weitere Informationen
+                            </label>
+                            <textarea 
+                                id="weitere_informationen" 
+                                name="weitere_informationen" 
+                                class="form-control-custom form-textarea"
+                                placeholder="Zusätzliche Notizen, Allergien, Besonderheiten..."
+                                rows="4"
+                            >{% if formData.weitere_informationen is defined %}{{ formData.weitere_informationen }}{% elseif mitglied.weitere_informationen %}{{ mitglied.weitere_informationen }}{% endif %}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save me-1"></i>
+                            {% if isEditMode %}
+                                Änderungen speichern
+                            {% else %}
+                                Informationen speichern
+                            {% endif %}
+                        </button>
+                        
+                        {% if isEditMode %}
+                            <a href="{{ url_for('mitglied-info-anzeigen', {'id': mitglied.mitglied_id}) }}" class="btn-cancel">
+                                <i class="fas fa-times me-1"></i>Abbrechen
+                            </a>
+                        {% else %}
+                            <a href="{{ url_for('mitglied-details', {'id': mitglied.mitglied_id}) }}" class="btn-cancel">
+                                <i class="fas fa-times me-1"></i>Abbrechen
+                            </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
