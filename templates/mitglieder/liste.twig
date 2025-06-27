@@ -25,7 +25,7 @@
                     <td>{{ mitglied.mitgliedschaft_typ }}</td>
                     <td>
                         <a href="{{ url_for('mitglied-details', {'id': mitglied.mitglied_id}) }}" class="btn btn-sm btn-info">Details</a>
-                        <a href="{{ url_for('mitglied-info-anzeigen', {'id': mitglied.mitglied_id}) }}" class="btn btn-sm btn-outline-info">Infos</a>
+                        
                         <a href="{{ url_for('mitglied-info-erstellen', {'id': mitglied.mitglied_id}) }}" class="btn btn-sm btn-info" >infos Erstellen</a>
                         <a href="{{ url_for('mitglied-loeschen', {'id': mitglied.mitglied_id}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Möchten Sie dieses Mitglied wirklich löschen?');">Löschen</a>
 

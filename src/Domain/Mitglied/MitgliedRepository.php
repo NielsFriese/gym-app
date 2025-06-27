@@ -31,7 +31,7 @@ class MitgliedRepository
 
         $mitglied = $query->fetch();
 
-        return $mitglied;
+        return $mitglied ?: [];
     }
 
    public function create(array $formularDaten): int
@@ -61,7 +61,8 @@ class MitgliedRepository
             $deleteQueries = [
                 "DELETE FROM kursanmeldungen WHERE mitglied_id = :id",
                 "DELETE FROM mitglied_infos WHERE mitglied_id = :id", 
-                "DELETE FROM trainingseinheiten WHERE mitglied_id = :id"
+                "DELETE FROM trainingseinheiten WHERE mitglied_id = :id",
+                "DELETE FROM maximalkraft_tests WHERE mitglied_id = :id"
             ];
             
             foreach ($deleteQueries as $sql) {

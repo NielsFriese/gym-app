@@ -1,0 +1,135 @@
+{% extends "layout.twig" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>{{ title }}</h1>
+            <p>Mitglied: {{ mitglied.vorname }} {{ mitglied.nachname }}</p>
+        </div>
+    </div>
+
+    {% if error is defined %}
+    <div class="alert alert-danger">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" action="{{ formAction }}">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="test_datum" class="form-label">Datum und Uhrzeit</label>
+                        <input type="datetime-local" class="form-control" id="test_datum" name="test_datum" 
+                               value="{{ formData.test_datum|date('Y-m-d\\TH:i') }}" required>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="uebung" class="form-label">Übung</label>
+                        <select class="form-select {% if errors.uebung is defined %}is-invalid{% endif %}" id="uebung" name="uebung" required>
+                            <option value="">Bitte wählen...</option>
+                            {% for option in uebungenOptionen %}
+                            <option value="{{ option.value }}" {% if formData.uebung == option.value %}selected{% endif %}>
+                                {{ option.label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.uebung is defined %}
+                        <div class="invalid-feedback">
+                            {{ errors.uebung }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="gewicht" class="form-label">Gewicht (kg)</label>
+                        <input type="number" step="0.01" min="0" class="form-control {% if errors.gewicht is defined %}is-invalid{% endif %}" 
+                               id="gewicht" name="gewicht" value="{{ formData.gewicht }}" required>
+                        {% if errors.gewicht is defined %}
+                        <div class="invalid-feedback">
+                            {{ errors.gewicht }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="wiederholungen" class="form-label">Wiederholungen</label>
+                        <input type="number" min="1" max="36" class="form-control {% if errors.wiederholungen is defined %}is-invalid{% endif %}" 
+                               id="wiederholungen" name="wiederholungen" value="{{ formData.wiederholungen }}" required>
+                        {% if errors.wiederholungen is defined %}
+                        <div class="invalid-feedback">
+                            {{ errors.wiederholungen }}
+                        </div>
+                        {% endif %}
+                        <small class="form-text text-muted">Gültige Werte: 1-36 Wiederholungen</small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="notizen" class="form-label">Notizen</label>
+                    <textarea class="form-control" id="notizen" name="notizen" rows="3">{{ formData.notizen }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Brzycki-Formel Berechnung</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <p>Die Brzycki-Formel berechnet das 1RM wie folgt:</p>
+                                    <p><strong>1RM = Gewicht × (36 / (37 - Wiederholungen))</strong></p>
+                                    <p>Beispiel: 80 kg × 8 Wiederholungen = 99,3 kg 1RM</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6>Berechnetes 1RM</h6>
+                                            <div id="berechnetes1RM" class="display-6">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="{{ backUrl }}" class="btn btn-secondary">Abbrechen</a>
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Funktion zur Berechnung des 1RM mit der Brzycki-Formel
+    function berechne1RM() {
+        const gewicht = parseFloat(document.getElementById('gewicht').value) || 0;
+        const wiederholungen = parseInt(document.getElementById('wiederholungen').value) || 0;
+        
+        if (gewicht > 0 && wiederholungen > 0 && wiederholungen < 37) {
+            const einrm = gewicht * (36 / (37 - wiederholungen));
+            document.getElementById('berechnetes1RM').textContent = einrm.toFixed(1) + ' kg';
+        } else {
+            document.getElementById('berechnetes1RM').textContent = '-';
+        }
+    }
+    
+    // Event-Listener für Änderungen an den Eingabefeldern
+    document.getElementById('gewicht').addEventListener('input', berechne1RM);
+    document.getElementById('wiederholungen').addEventListener('input', berechne1RM);
+    
+    // Initial berechnen, falls Werte bereits vorhanden sind
+    berechne1RM();
+});
+</script>
+{% endblock %}

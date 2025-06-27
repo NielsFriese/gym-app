@@ -1,4 +1,4 @@
-# Redirect to front controller
+
 RewriteEngine On
 # RewriteBase /
 RewriteCond %{REQUEST_FILENAME} !-d

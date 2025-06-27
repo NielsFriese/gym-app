@@ -1,0 +1,75 @@
+{# templates/trainingsplan/liste.twig #}
+{% extends 'layout.twig' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>{{ title }}</h1>
+    {% if mitglied is defined %}
+    <a href="{{ createUrl }}" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Neuen Trainingsplan erstellen
+    </a>
+    {% endif %}
+    </div>
+    
+    {% if trainingsplaene is empty %}
+    <div class="alert alert-info">
+        Keine Trainingspläne gefunden.
+    </div>
+    {% else %}
+    <div class="row">
+        {% for plan in trainingsplaene %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">{{ plan.plan_name }}</h5>
+                    {% if plan.ist_aktiv %}
+                    <span class="badge bg-success">Aktiv</span>
+                    {% else %}
+                    <span class="badge bg-secondary">Inaktiv</span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <p><strong>Trainingsart:</strong> {{ plan.trainingsart }}</p>
+                    <p><strong>Schwierigkeitsgrad:</strong> {{ plan.schwierigkeitsgrad }}</p>
+                    <p><strong>Übungen:</strong> {{ plan.uebungen_count }}</p>
+                    
+                    {% if plan.uebungen_nach_tag|length > 0 %}
+                    <div class="mt-3">
+                        <h6>Trainingstage:</h6>
+                        <ul class="list-group">
+                            {% for tag, uebungen in plan.uebungen_nach_tag %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ tag }}
+                                <span class="badge bg-primary rounded-pill">{{ uebungen|length }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                    
+                    {% if plan.notizen %}
+                    <div class="mt-3">
+                        <h6>Notizen:</h6>
+                        <p class="text-muted">{{ plan.notizen }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{{ url_for('trainingsplan-anzeigen', {'plan_id': plan.trainingsplan_id}) }}" class="btn btn-primary">
+                        <i class="fas fa-eye"></i> Anzeigen
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="mt-4">
+        <a href="{{ backUrl }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Zurück
+        </a>
+    </div>
+</div>
+{% endblock %}

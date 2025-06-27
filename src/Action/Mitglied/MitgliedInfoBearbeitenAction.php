@@ -61,7 +61,6 @@ final class MitgliedInfoBearbeitenAction
                 'gewicht' => !empty($formularDaten['gewicht']) ? (float)$formularDaten['gewicht'] : null,
                 'groesse' => !empty($formularDaten['groesse']) ? (float)$formularDaten['groesse'] : null,
                 'geschlecht' => !empty($formularDaten['geschlecht']) ? $formularDaten['geschlecht'] : null,
-                'max_kraft' => !empty($formularDaten['max_kraft']) ? (float)$formularDaten['max_kraft'] : null,
                 'weitere_informationen' => !empty($formularDaten['weitere_informationen']) ? $formularDaten['weitere_informationen'] : null,
             ]);
 

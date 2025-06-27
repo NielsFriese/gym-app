@@ -2,54 +2,290 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-    <h1>{{ title }}</h1>
+<style>
+.form-page {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 2rem 0;
+}
 
- 
+.form-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
 
+.page-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
 
-    <form action="{{ formAction }}" method="POST">
-        <div class="mb-3">
-            <label for="vorname" class="form-label">Vorname</label>
-            <input type="text" class="form-control" id="vorname" name="vorname" value="{{ mitglied.vorname | default('') }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="nachname" class="form-label">Nachname</label>
-            <input type="text" class="form-control" id="nachname" name="nachname" value="{{ mitglied.nachname | default('') }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ mitglied.email | default('') }}" required>
-        </div>
-        <div class="mb-3">
-            <label for="geburtsdatum" class="form-label">Geburtsdatum</label>
-            <input type="date" class="form-control" id="geburtsdatum" name="geburtsdatum" value="{{ mitglied.geburtsdatum | default('') }}" required>
-        </div>
+.page-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 2px 2px 8px rgba(44, 62, 80, 0.18);
+    margin: 0;
+}
 
-        {# Das Beitrittsdatum wird normalerweise beim Erstellen gesetzt und nicht geändert. 
-           Wenn du es im Bearbeitungsmodus anzeigen (aber nicht bearbeiten) möchtest: #}
-        {% if isEditMode and mitglied.beitrittsdatum %}
-        <div class="mb-3">
-            <label for="beitrittsdatum_display" class="form-label">Beitrittsdatum (nicht änderbar)</label>
-            <input type="text" class="form-control" id="beitrittsdatum_display" value="{{ mitglied.beitrittsdatum }}" readonly>
-        </div>
-        {% endif %}
+.form-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.13);
+    overflow: hidden;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
+}
 
-        <div class="mb-3">
-            <label for="mitgliedschaft_typ" class="form-label">Mitgliedschaftstyp</label>
-            <select class="form-select" id="mitgliedschaft_typ" name="mitgliedschaft_typ" required>
-                {% for typ in mitgliedschaftsTypen %}
-                    <option value="{{ typ }}" {{ mitglied.mitgliedschaft_typ == typ ? 'selected' : '' }}>{{ typ }}</option>
-                {% endfor %}
-            </select>
-        </div>
+.form-header {
+    background: linear-gradient(135deg, #2d3748, #4a5568);
+    color: #fff;
+    padding: 1.5rem 2.5rem;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+}
 
-        <button type="submit" class="btn btn-success">
-            {% if isEditMode %}
-                Änderungen speichern
-            {% else %}
-                Mitglied erstellen
-            {% endif %}
-        </button>
-        <a href="{{ url_for(isEditMode ? 'mitglied-details' : 'mitglieder-liste', isEditMode ? {'id': mitglied.mitglied_id} : {}) }}" class="btn btn-secondary">Abbrechen</a>
-    </form>
+.form-header h5 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-body {
+    padding: 2.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.8rem;
+    position: relative;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 0.7rem;
+    font-size: 1rem;
+}
+
+.form-control-custom {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.form-control-custom:focus {
+    outline: none;
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.form-control-custom:hover {
+    border-color: #cbd5e0;
+    background: white;
+}
+
+.form-control-custom[readonly] {
+    background-color: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #64748b;
+    cursor: not-allowed;
+}
+
+.form-select-custom {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%234a5568' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+}
+
+.form-select-custom:focus {
+    outline: none;
+    border-color: #667eea;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.form-select-custom:hover {
+    border-color: #cbd5e0;
+    background-color: white;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.8rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1.2rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-submit {
+    background: linear-gradient(45deg, #48bb78, #38a169);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 1rem 2.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    box-shadow: 0 2px 8px rgba(72, 187, 120, 0.13);
+}
+
+.btn-submit:hover {
+    background: linear-gradient(45deg, #38a169, #48bb78);
+    color: #fff;
+    transform: translateY(-2px) scale(1.04);
+}
+
+.btn-cancel {
+    background: linear-gradient(45deg, #a0aec0, #718096);
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    padding: 1rem 2.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    box-shadow: 0 2px 8px rgba(113, 128, 150, 0.13);
+}
+
+.btn-cancel:hover {
+    background: linear-gradient(45deg, #718096, #a0aec0);
+    color: #fff;
+    transform: translateY(-2px) scale(1.04);
+    text-decoration: none;
+}
+
+@media (max-width: 1100px) {
+    .form-container {
+        padding: 0 1rem;
+    }
+    .form-body {
+        padding: 1.5rem;
+    }
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    .btn-submit, .btn-cancel {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+
+<div class="form-page">
+    <div class="form-container">
+        <div class="page-header">
+            <h1 class="page-title">{{ title }}</h1>
+        </div>
+        
+        <div class="form-card">
+            <div class="form-header">
+                <h5>
+                    <i class="fas fa-user-edit me-2"></i>
+                    {% if isEditMode %}Mitglied bearbeiten{% else %}Neues Mitglied anlegen{% endif %}
+                </h5>
+            </div>
+            
+            <div class="form-body">
+                <form action="{{ formAction }}" method="POST">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="vorname" class="form-label">Vorname</label>
+                            <input type="text" class="form-control-custom" id="vorname" name="vorname" value="{{ mitglied.vorname | default('') }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="nachname" class="form-label">Nachname</label>
+                            <input type="text" class="form-control-custom" id="nachname" name="nachname" value="{{ mitglied.nachname | default('') }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control-custom" id="email" name="email" value="{{ mitglied.email | default('') }}" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="geburtsdatum" class="form-label">Geburtsdatum</label>
+                            <input type="date" class="form-control-custom" id="geburtsdatum" name="geburtsdatum" value="{{ mitglied.geburtsdatum | default('') }}" required>
+                        </div>
+
+                        {# Das Beitrittsdatum wird normalerweise beim Erstellen gesetzt und nicht geändert. #}
+                        {% if isEditMode and mitglied.beitrittsdatum %}
+                        <div class="form-group">
+                            <label for="beitrittsdatum_display" class="form-label">Beitrittsdatum (nicht änderbar)</label>
+                            <input type="text" class="form-control-custom" id="beitrittsdatum_display" value="{{ mitglied.beitrittsdatum }}" readonly>
+                        </div>
+                        {% endif %}
+
+                        <div class="form-group">
+                            <label for="mitgliedschaft_typ" class="form-label">Mitgliedschaftstyp</label>
+                            <select class="form-select-custom" id="mitgliedschaft_typ" name="mitgliedschaft_typ" required>
+                                {% for typ in mitgliedschaftsTypen %}
+                                    <option value="{{ typ }}" {{ mitglied.mitgliedschaft_typ == typ ? 'selected' : '' }}>{{ typ }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas {% if isEditMode %}fa-save{% else %}fa-user-plus{% endif %} me-1"></i>
+                            {% if isEditMode %}
+                                Änderungen speichern
+                            {% else %}
+                                Mitglied erstellen
+                            {% endif %}
+                        </button>
+                        <a href="{{ url_for(isEditMode ? 'mitglied-details' : 'mitglieder-liste', isEditMode ? {'id': mitglied.mitglied_id} : {}) }}" class="btn-cancel">
+                            <i class="fas fa-times me-1"></i>Abbrechen
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

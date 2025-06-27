@@ -19,6 +19,11 @@ use Slim\Factory\AppFactory;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Views\Twig;
 
+// Repository imports
+use App\Domain\Mitglied\MitgliedRepository;
+use App\Domain\Maximalkraft\MaximalkraftTestRepository;
+use App\Domain\Kurse\KursRepository;
+
 return [
     // Application settings
     'settings' => fn () => require __DIR__ . '/settings.php',
@@ -119,5 +124,18 @@ return [
         ];
 
         return new PDO($dsn, $settings['username'], $settings['password'], $options);
+    },
+
+    // Repository Registrierungen
+    MitgliedRepository::class => function (ContainerInterface $container) {
+        return new MitgliedRepository($container->get(PDO::class));
+    },
+
+    MaximalkraftTestRepository::class => function (ContainerInterface $container) {
+        return new MaximalkraftTestRepository($container->get(PDO::class));
+    },
+
+    KursRepository::class => function (ContainerInterface $container) {
+        return new KursRepository($container->get(PDO::class));
     },
 ];

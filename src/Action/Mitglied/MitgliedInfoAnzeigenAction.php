@@ -24,12 +24,22 @@ final class MitgliedInfoAnzeigenAction
         $mitglied = $this->mitgliedRepo->findByIdWithInfo($mitgliedId);
 
         if (!$mitglied) {
+            // Mitglied nicht gefunden - 404 Status zurückgeben
             return $response->withStatus(404);
         }
 
+        // Erweiterte Daten für die kombinierte Ansicht
         $data = [
-            'title' => 'Mitglied Informationen - ' . $mitglied['vorname'] . ' ' . $mitglied['nachname'],
+            'title' => 'Mitglied: ' . $mitglied['vorname'] . ' ' . $mitglied['nachname'],
             'mitglied' => $mitglied,
+            // Grunddaten explizit für die Ansicht bereitstellen
+            'grunddaten' => [
+                'mitglied_id' => $mitglied['mitglied_id'],
+                'email' => $mitglied['email'],
+                'geburtsdatum' => $mitglied['geburtsdatum'],
+                'beitrittsdatum' => $mitglied['beitrittsdatum'],
+                'mitgliedschaft_typ' => $mitglied['mitgliedschaft_typ']
+            ]
         ];
 
         return $this->view->render($response, 'mitglieder/info-anzeigen.twig', $data);

@@ -1,0 +1,268 @@
+{# templates/trainingsplan/bearbeiten-form.twig #}
+{% extends 'layout.twig' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ title }}</h1>
+    
+    <form method="post" action="{{ submitUrl }}">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Grunddaten</h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="plan_name" class="form-label">Name des Trainingsplans</label>
+                        <input type="text" class="form-control" id="plan_name" name="plan_name" value="{{ trainingsplan.plan_name }}" required>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mt-4">
+                            <input class="form-check-input" type="checkbox" id="ist_aktiv" name="ist_aktiv" value="1" {% if trainingsplan.ist_aktiv %}checked{% endif %}>
+                            <label class="form-check-label" for="ist_aktiv">
+                                Aktiver Trainingsplan
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="schwierigkeitsgrad" class="form-label">Schwierigkeitsgrad</label>
+                        <select class="form-select" id="schwierigkeitsgrad" name="schwierigkeitsgrad" required>
+                            <option value="Anfänger" {% if trainingsplan.schwierigkeitsgrad == 'Anfänger' %}selected{% endif %}>Anfänger</option>
+                            <option value="Fortgeschritten" {% if trainingsplan.schwierigkeitsgrad == 'Fortgeschritten' %}selected{% endif %}>Fortgeschritten</option>
+                            <option value="Experte" {% if trainingsplan.schwierigkeitsgrad == 'Experte' %}selected{% endif %}>Experte</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="trainingsart" class="form-label">Trainingsart</label>
+                        <select class="form-select" id="trainingsart" name="trainingsart" required>
+                            <option value="Kraftausdauer" {% if trainingsplan.trainingsart == 'Kraftausdauer' %}selected{% endif %}>Kraftausdauer</option>
+                            <option value="Muskelaufbau" {% if trainingsplan.trainingsart == 'Muskelaufbau' %}selected{% endif %}>Muskelaufbau</option>
+                            <option value="IK Training" {% if trainingsplan.trainingsart == 'IK Training' %}selected{% endif %}>Intramuskuläres Training (IK)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label for="notizen" class="form-label">Notizen</label>
+                        <textarea class="form-control" id="notizen" name="notizen" rows="3">{{ trainingsplan.notizen }}</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        {% if uebungenNachTag is not empty %}
+            {% for tag, tagUebungen in uebungenNachTag %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">{{ tag }}</h5>
+                    </div>
+                    <div class="card-body">
+                        {% for uebung in tagUebungen %}
+                            <div class="card mb-3">
+                                <div class="card-header bg-light">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">{{ uebung.name }}</h6>
+                                        <div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#collapse-uebung-{{ uebung.trainingsplan_uebung_id }}">
+                                                <i class="fas fa-edit"></i> Bearbeiten
+                                            </button>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="entfernen_{{ uebung.trainingsplan_uebung_id }}" name="entfernen_uebungen[]" value="{{ uebung.trainingsplan_uebung_id }}">
+                                                <label class="form-check-label" for="entfernen_{{ uebung.trainingsplan_uebung_id }}">Entfernen</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="collapse" id="collapse-uebung-{{ uebung.trainingsplan_uebung_id }}">
+                                    <div class="card-body">
+                                        <div class="row mb-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Reihenfolge</label>
+                                                <input type="number" class="form-control" name="uebungen[{{ uebung.trainingsplan_uebung_id }}][reihenfolge]" value="{{ uebung.reihenfolge }}" min="1">
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Trainingstag</label>
+                                                <select class="form-select" name="uebungen[{{ uebung.trainingsplan_uebung_id }}][trainingstag]">
+                                                    <option value="Montag" {% if uebung.trainingstag == 'Montag' %}selected{% endif %}>Montag</option>
+                                                    <option value="Dienstag" {% if uebung.trainingstag == 'Dienstag' %}selected{% endif %}>Dienstag</option>
+                                                    <option value="Mittwoch" {% if uebung.trainingstag == 'Mittwoch' %}selected{% endif %}>Mittwoch</option>
+                                                    <option value="Donnerstag" {% if uebung.trainingstag == 'Donnerstag' %}selected{% endif %}>Donnerstag</option>
+                                                    <option value="Freitag" {% if uebung.trainingstag == 'Freitag' %}selected{% endif %}>Freitag</option>
+                                                    <option value="Samstag" {% if uebung.trainingstag == 'Samstag' %}selected{% endif %}>Samstag</option>
+                                                    <option value="Sonntag" {% if uebung.trainingstag == 'Sonntag' %}selected{% endif %}>Sonntag</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-check mt-4">
+                                                    <input class="form-check-input" type="checkbox" id="ersetzen_{{ uebung.trainingsplan_uebung_id }}" name="uebungen[{{ uebung.trainingsplan_uebung_id }}][ersetzen]" value="1">
+                                                    <label class="form-check-label" for="ersetzen_{{ uebung.trainingsplan_uebung_id }}">Übung ersetzen</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row mb-3 ersatz-uebung-container" id="ersatz-container-{{ uebung.trainingsplan_uebung_id }}" style="display: none;">
+                                            <div class="col-md-12">
+                                                <label class="form-label">Ersatzübung</label>
+                                                <select class="form-select" name="uebungen[{{ uebung.trainingsplan_uebung_id }}][neue_uebung_id]">
+                                                    <option value="">Bitte wählen...</option>
+                                                    {% for muskelgruppe, muskelUebungen in uebungenNachMuskelgruppe %}
+                                                        <optgroup label="{{ muskelgruppe }}">
+                                                            {% for ersatzUebung in muskelUebungen %}
+                                                                <option value="{{ ersatzUebung.uebung_id }}" {% if ersatzUebung.uebung_id == uebung.uebung_id %}disabled{% endif %}>
+                                                                    {{ ersatzUebung.name }} ({{ ersatzUebung.schwierigkeitsgrad }})
+                                                                </option>
+                                                            {% endfor %}
+                                                        </optgroup>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Satz</th>
+                                                        <th>Wiederholungen</th>
+                                                        <th>Gewicht (kg)</th>
+                                                        <th>Pause (Sek.)</th>
+                                                        <th>Notizen</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for detail in uebung.details %}
+                                                        <tr>
+                                                            <td>{{ detail.satz_nummer }}</td>
+                                                            <td>
+                                                                <input type="number" class="form-control" name="uebungen[{{ uebung.trainingsplan_uebung_id }}][details][{{ detail.detail_id }}][wiederholungen]" value="{{ detail.wiederholungen }}" min="1">
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" class="form-control" name="uebungen[{{ uebung.trainingsplan_uebung_id }}][details][{{ detail.detail_id }}][gewicht_kg]" value="{{ detail.gewicht_kg }}" min="0" step="0.5">
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" class="form-control" name="uebungen[{{ uebung.trainingsplan_uebung_id }}][details][{{ detail.detail_id }}][pause_sekunden]" value="{{ detail.pause_sekunden }}" min="0">
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control" name="uebungen[{{ uebung.trainingsplan_uebung_id }}][details][{{ detail.detail_id }}][notizen]" value="{{ detail.notizen }}">
+                                                            </td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Neue Übungen hinzufügen</h5>
+            </div>
+            <div class="card-body">
+                <div id="neue-uebungen-container">
+                    <div class="row mb-3 neue-uebung-row">
+                        <div class="col-md-6">
+                            <label class="form-label">Übung</label>
+                            <select class="form-select" name="neue_uebungen[0][uebung_id]">
+                                <option value="">Bitte wählen...</option>
+                                {% for muskelgruppe, muskelUebungen in uebungenNachMuskelgruppe %}
+                                    <optgroup label="{{ muskelgruppe }}">
+                                        {% for uebung in muskelUebungen %}
+                                            <option value="{{ uebung.uebung_id }}">
+                                                {{ uebung.name }} ({{ uebung.schwierigkeitsgrad }})
+                                            </option>
+                                        {% endfor %}
+                                    </optgroup>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Trainingstag</label>
+                            <select class="form-select" name="neue_uebungen[0][trainingstag]">
+                                <option value="Montag">Montag</option>
+                                <option value="Dienstag">Dienstag</option>
+                                <option value="Mittwoch">Mittwoch</option>
+                                <option value="Donnerstag">Donnerstag</option>
+                                <option value="Freitag">Freitag</option>
+                                <option value="Samstag">Samstag</option>
+                                <option value="Sonntag">Sonntag</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="button" class="btn btn-danger btn-sm remove-uebung" style="display: none;">
+                                <i class="fas fa-trash"></i> Entfernen
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-success" id="add-uebung-btn">
+                    <i class="fas fa-plus"></i> Weitere Übung hinzufügen
+                </button>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between mt-4 mb-5">
+            <a href="{{ backUrl }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Zurück
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Trainingsplan speichern
+            </button>
+        </div>
+    </form>
+</div>
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ersatzübung anzeigen/verstecken
+        const ersetzenCheckboxes = document.querySelectorAll('input[name$="[ersetzen]"]');
+        ersetzenCheckboxes.forEach(function(checkbox) {
+            const uebungId = checkbox.id.split('_')[1];
+            const ersatzContainer = document.getElementById('ersatz-container-' + uebungId);
+            
+            checkbox.addEventListener('change', function() {
+                ersatzContainer.style.display = this.checked ? 'block' : 'none';
+            });
+        });
+        
+        // Neue Übungen hinzufügen
+        let uebungCounter = 1;
+        const container = document.getElementById('neue-uebungen-container');
+        const addButton = document.getElementById('add-uebung-btn');
+        
+        addButton.addEventListener('click', function() {
+            const row = document.querySelector('.neue-uebung-row').cloneNode(true);
+            
+            // IDs und Namen aktualisieren
+            const selects = row.querySelectorAll('select');
+            selects.forEach(function(select) {
+                const name = select.getAttribute('name');
+                select.setAttribute('name', name.replace('[0]', '[' + uebungCounter + ']'));
+            });
+            
+            // Remove-Button anzeigen
+            const removeButton = row.querySelector('.remove-uebung');
+            removeButton.style.display = 'block';
+            removeButton.addEventListener('click', function() {
+                container.removeChild(row);
+            });
+            
+            container.appendChild(row);
+            uebungCounter++;
+        });
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

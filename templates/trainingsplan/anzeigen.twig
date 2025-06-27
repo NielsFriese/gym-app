@@ -1,0 +1,204 @@
+{# templates/trainingsplan/anzeigen.twig #}
+{% extends 'layout.twig' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ title }}</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Trainingsplan-Details</h5>
+                {% if trainingsplan.ist_aktiv %}
+                    <span class="badge bg-success">Aktiver Plan</span>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Mitglied:</strong> {{ mitglied.vorname }} {{ mitglied.nachname }}</p>
+                    <p><strong>Schwierigkeitsgrad:</strong> {{ trainingsplan.schwierigkeitsgrad }}</p>
+                    <p><strong>Trainingsart:</strong> {{ trainingsplan.trainingsart }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Erstellt am:</strong> {{ trainingsplan.erstellt_am|date('d.m.Y') }}</p>
+                    {% if trainingsplan.gueltig_bis %}
+                        <p><strong>Gültig bis:</strong> {{ trainingsplan.gueltig_bis|date('d.m.Y') }}</p>
+                    {% endif %}
+                    {% if trainingsplan.notizen %}
+                        <p><strong>Notizen:</strong> {{ trainingsplan.notizen }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <p><strong>Gewicht:</strong> {{ mitglied.gewicht }} kg</p>
+                    <p><strong>Größe:</strong> {{ mitglied.groesse }} cm</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Geschlecht:</strong> 
+                        {% if mitglied.geschlecht == 'm' %}Männlich
+                        {% elseif mitglied.geschlecht == 'w' %}Weiblich
+                        {% else %}Divers{% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    {% if maximalkraftTests is not empty %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Maximalkraft-Tests</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Übung</th>
+                                <th>Datum</th>
+                                <th>Gewicht</th>
+                                <th>Wiederholungen</th>
+                                <th>1RM</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for test in maximalkraftTests %}
+                                <tr>
+                                    <td>{{ test.uebung }}</td>
+                                    <td>{{ test.test_datum|date('d.m.Y') }}</td>
+                                    <td>{{ test.gewicht }} kg</td>
+                                    <td>{{ test.wiederholungen }}</td>
+                                    <td>{{ test.berechnetes_1rm|number_format(1) }} kg</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    {% if uebungenNachTag is not empty %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Trainingsplan</h5>
+            </div>
+            <div class="card-body">
+                <ul class="nav nav-tabs" id="trainingsplanTabs" role="tablist">
+                    {% for tag, tagUebungen in uebungenNachTag %}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link {% if loop.first %}active{% endif %}" 
+                                    id="tab-{{ tag }}" 
+                                    data-bs-toggle="tab" 
+                                    data-bs-target="#content-{{ tag }}" 
+                                    type="button" 
+                                    role="tab" 
+                                    aria-controls="content-{{ tag }}" 
+                                    aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+                                {{ tag }}
+                            </button>
+                        </li>
+                    {% endfor %}
+                </ul>
+                
+                <div class="tab-content mt-3" id="trainingsplanTabContent">
+                    {% for tag, tagUebungen in uebungenNachTag %}
+                        <div class="tab-pane fade {% if loop.first %}show active{% endif %}" 
+                             id="content-{{ tag }}" 
+                             role="tabpanel" 
+                             aria-labelledby="tab-{{ tag }}">
+                            
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Nr.</th>
+                                            <th>Übung</th>
+                                            <th>Muskelgruppe</th>
+                                            <th>Satz</th>
+                                            <th>Wiederholungen</th>
+                                            <th>Gewicht</th>
+                                            <th>Pause</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for uebung in tagUebungen %}
+                                            {% for detail in uebung.details %}
+                                                <tr {% if detail.satz_nummer == 1 and not loop.first %}class="border-top border-dark"{% endif %}>
+                                                    {% if detail.satz_nummer == 1 %}
+                                                        <td rowspan="{{ uebung.details|length }}">{{ uebung.reihenfolge }}</td>
+                                                        <td rowspan="{{ uebung.details|length }}">
+                                                            <strong>{{ uebung.name }}</strong>
+                                                            {% if uebung.equipment %}
+                                                                <br><small>{{ uebung.equipment }}</small>
+                                                            {% endif %}
+                                                        </td>
+                                                        <td rowspan="{{ uebung.details|length }}">{{ uebung.muskelgruppe }}</td>
+                                                    {% endif %}
+                                                    <td>{{ detail.satz_nummer }}</td>
+                                                    <td>{{ detail.wiederholungen }}</td>
+                                                    <td>
+                                                        {% if detail.gewicht_kg > 0 %}
+                                                            {{ detail.gewicht_kg }} kg
+                                                            {% if detail.gewicht_prozent %}
+                                                                <br><small>({{ detail.gewicht_prozent }}% 1RM)</small>
+                                                            {% endif %}
+                                                        {% else %}
+                                                            -
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>{{ detail.pause_sekunden }} Sek.</td>
+                                                </tr>
+                                            {% endfor %}
+                                            
+                                            {% if uebung.maximalkraft_test is defined %}
+                                                <tr class="table-secondary">
+                                                    <td colspan="7">
+                                                        <small>
+                                                            <strong>Maximalkraft-Test:</strong> 
+                                                            {{ uebung.maximalkraft_test.berechnetes_1rm|number_format(1) }} kg (1RM) 
+                                                            am {{ uebung.maximalkraft_test.test_datum|date('d.m.Y') }}
+                                                        </small>
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+                                            
+                                            {% if uebung.anleitung %}
+                                                <tr class="table-light">
+                                                    <td colspan="7">
+                                                        <small>
+                                                            <strong>Anleitung:</strong> {{ uebung.anleitung }}
+                                                        </small>
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+    
+    <div class="d-flex justify-content-between mt-4">
+        <a href="{{ backUrl }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Zurück
+        </a>
+        <div>
+            <a href="{{ editUrl }}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Bearbeiten
+            </a>
+            <a href="{{ deleteUrl }}" class="btn btn-danger" onclick="return confirm('Sind Sie sicher, dass Sie diesen Trainingsplan löschen möchten?');">
+                <i class="fas fa-trash"></i> Löschen
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

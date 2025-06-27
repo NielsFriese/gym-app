@@ -1,0 +1,170 @@
+{# templates/trainingsplan/generieren-form.twig #}
+{% extends 'layout.twig' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>{{ title }}</h1>
+    
+    <div class="card mb-4">
+    <div class="card-header">
+    <h5 class="mb-0">Trainingsplan für {{ mitglied.vorname }} {{ mitglied.nachname }} erstellen</h5>
+    </div>
+    <div class="card-body">
+    <form method="post" action="{{ submitUrl }}">
+    <div class="row mb-3">
+    <div class="col-md-6">
+    <div class="form-group">
+    <label for="plan_name">Name des Trainingsplans</label>
+    <input type="text" class="form-control" id="plan_name" name="plan_name" value="Trainingsplan für {{ mitglied.vorname }}" required>
+    </div>
+    </div>
+    <div class="col-md-6">
+    <div class="form-group">
+    <label for="schwierigkeitsgrad">Schwierigkeitsgrad</label>
+    <select class="form-control" id="schwierigkeitsgrad" name="schwierigkeitsgrad">
+    <option value="Anfänger">Anfänger</option>
+    <option value="Fortgeschritten">Fortgeschritten</option>
+    <option value="Profi">Profi</option>
+    </select>
+    </div>
+    </div>
+    </div>
+    
+    <div class="row mb-3">
+    <div class="col-md-6">
+    <div class="form-group">
+    <label for="trainingsart">Trainingsart</label>
+    <select class="form-control" id="trainingsart" name="trainingsart">
+    <option value="Kraftausdauer">Kraftausdauer</option>
+    <option value="Muskelaufbau">Muskelaufbau</option>
+    <option value="IK Training">IK Training</option>
+    </select>
+    </div>
+    </div>
+    <div class="col-md-6">
+    <div class="form-group">
+    <label>Trainingstage</label>
+    <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="trainingstage[]" value="Montag" id="tag_montag" checked>
+    <label class="form-check-label" for="tag_montag">Montag</label>
+    </div>
+    <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="trainingstage[]" value="Dienstag" id="tag_dienstag">
+    <label class="form-check-label" for="tag_dienstag">Dienstag</label>
+    </div>
+    <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="trainingstage[]" value="Mittwoch" id="tag_mittwoch" checked>
+    <label class="form-check-label" for="tag_mittwoch">Mittwoch</label>
+    </div>
+    <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="trainingstage[]" value="Donnerstag" id="tag_donnerstag">
+    <label class="form-check-label" for="tag_donnerstag">Donnerstag</label>
+    </div>
+    <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="trainingstage[]" value="Freitag" id="tag_freitag" checked>
+    <label class="form-check-label" for="tag_freitag">Freitag</label>
+    </div>
+    <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="trainingstage[]" value="Samstag" id="tag_samstag">
+    <label class="form-check-label" for="tag_samstag">Samstag</label>
+    </div>
+    <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="trainingstage[]" value="Sonntag" id="tag_sonntag">
+    <label class="form-check-label" for="tag_sonntag">Sonntag</label>
+    </div>
+    </div>
+    </div>
+    </div>
+    
+    <div class="form-group mb-3">
+    <label for="notizen">Notizen</label>
+    <textarea class="form-control" id="notizen" name="notizen" rows="3"></textarea>
+    </div>
+    
+    <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" id="use_maximalkraft" name="use_maximalkraft" value="1">
+    <label class="form-check-label" for="use_maximalkraft">
+    Maximalkraft-Tests für Gewichtsberechnung verwenden
+    </label>
+    </div>
+    
+    <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" id="manuelle_gewichte" name="manuelle_gewichte" value="1" onchange="toggleGewichtFelder(this.checked)">
+    <label class="form-check-label" for="manuelle_gewichte">
+    Gewichte manuell einstellen
+    </label>
+    </div>
+    
+    <h4 class="mt-4">Übungen auswählen (optional)</h4>
+    <p class="text-muted">Sie können optional Übungen für den Trainingsplan auswählen. Wenn Sie keine Übungen auswählen, werden automatisch passende Übungen basierend auf Schwierigkeitsgrad und Trainingsart ausgewählt. Es werden immer mindestens 7 Übungen im Trainingsplan enthalten sein.</p>
+    
+    <div class="accordion" id="uebungenAccordion">
+    {% for muskelgruppe, muskelgruppeUebungen in uebungenNachMuskelgruppe %}
+    <div class="accordion-item">
+    <h2 class="accordion-header" id="heading{{ loop.index }}">
+    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ loop.index }}" aria-expanded="false" aria-controls="collapse{{ loop.index }}">
+    {{ muskelgruppe }} ({{ muskelgruppeUebungen|length }} Übungen)
+    </button>
+    </h2>
+    <div id="collapse{{ loop.index }}" class="accordion-collapse collapse" aria-labelledby="heading{{ loop.index }}" data-bs-parent="#uebungenAccordion">
+    <div class="accordion-body">
+    <div class="row">
+    {% for uebung in muskelgruppeUebungen %}
+    <div class="col-md-6 mb-2">
+    <div class="form-check">
+    <input class="form-check-input uebung-checkbox" type="checkbox" name="selected_uebungen[]" value="{{ uebung.uebung_id }}" id="uebung_{{ uebung.uebung_id }}">
+    <label class="form-check-label" for="uebung_{{ uebung.uebung_id }}">
+    {{ uebung.name }} ({{ uebung.schwierigkeitsgrad }})
+    </label>
+    </div>
+    <div class="gewicht-input-container ml-4 mt-1" style="display: none;">
+    <div class="input-group input-group-sm">
+    <input type="number" class="form-control" name="gewicht[{{ uebung.uebung_id }}]" placeholder="Gewicht in kg" step="0.5" min="0">
+    <div class="input-group-append">
+    <span class="input-group-text">kg</span>
+    </div>
+    </div>
+    </div>
+    </div>
+    {% endfor %}
+    </div>
+    </div>
+    </div>
+    </div>
+    {% endfor %}
+    </div>
+    
+    <div class="mt-4">
+    <button type="submit" class="btn btn-primary" id="submitBtn">Trainingsplan erstellen</button>
+    <a href="{{ backUrl }}" class="btn btn-secondary">Zurück</a>
+    </div>
+    </form>
+    </div>
+    </div>
+</div>
+
+<script>
+    // Funktion zum Ein-/Ausblenden der Gewichtsfelder
+    function toggleGewichtFelder(show) {
+    const gewichtFelder = document.querySelectorAll('.gewicht-input-container');
+    gewichtFelder.forEach(feld => {
+    feld.style.display = show ? 'block' : 'none';
+    });
+    }
+    
+    // Event-Listener für Übungs-Checkboxen
+    document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.uebung-checkbox');
+    checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+    const gewichtContainer = this.parentElement.nextElementSibling;
+    if (this.checked && document.getElementById('manuelle_gewichte').checked) {
+    gewichtContainer.style.display = 'block';
+    } else {
+    gewichtContainer.style.display = 'none';
+    }
+    });
+    });
+    });
+</script>
+{% endblock %}
