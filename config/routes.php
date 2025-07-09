@@ -21,6 +21,11 @@ use App\Action\Trainingsplan\TrainingsplanListeAction;
 use App\Action\Trainingsplan\TrainingsplanAnzeigenAction;
 use App\Action\Trainingsplan\TrainingsplanBearbeitenAction;
 use App\Action\Trainingsplan\TrainingsplanLoeschenAction;
+// Neue Benutzer-Action-Klassen
+use App\Action\Benutzer\BenutzerRegistrierenAction;
+use App\Action\Benutzer\BenutzerLoginAction;
+use App\Action\Benutzer\BenutzerProfilAction;
+use App\Action\Benutzer\BenutzerLogoutAction;
 use Slim\App;
 use Slim\Views\Twig;
 use Slim\Views\TwigMiddleware;
@@ -94,4 +99,20 @@ return function (App $app) {
 
     // Allgemeine Routen
     $app->get('/home', HomeAction::class)->setName('home');
+
+    // Neue Benutzer-Routen
+    // Registrierung
+    $app->get('/benutzer/registrieren', [BenutzerRegistrierenAction::class, 'showForm'])->setName('benutzer-registrieren');
+    $app->post('/benutzer/registrieren', [BenutzerRegistrierenAction::class, 'handleSubmit'])->setName('benutzer-registrieren-submit');
+    
+    // Login
+    $app->get('/benutzer/login', [BenutzerLoginAction::class, 'showForm'])->setName('benutzer-login');
+    $app->post('/benutzer/login', [BenutzerLoginAction::class, 'handleSubmit'])->setName('benutzer-login-submit');
+    
+    // Profil
+    $app->get('/benutzer/profil', BenutzerProfilAction::class)->setName('benutzer-profil');
+    
+    // Logout
+    $app->get('/benutzer/logout', BenutzerLogoutAction::class)->setName('benutzer-logout');
+
 };

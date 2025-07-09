@@ -3,202 +3,386 @@
 
 {% block content %}
 <div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
     <h1>{{ title }}</h1>
+    <div>
+    <a href="{{ editUrl }}" class="btn btn-primary">Bearbeiten</a>
+    <a href="{{ backUrl }}" class="btn btn-secondary">Zurück</a>
+    </div>
+    </div>
     
     <div class="card mb-4">
-        <div class="card-header">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Trainingsplan-Details</h5>
-                {% if trainingsplan.ist_aktiv %}
-                    <span class="badge bg-success">Aktiver Plan</span>
-                {% endif %}
-            </div>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <p><strong>Mitglied:</strong> {{ mitglied.vorname }} {{ mitglied.nachname }}</p>
-                    <p><strong>Schwierigkeitsgrad:</strong> {{ trainingsplan.schwierigkeitsgrad }}</p>
-                    <p><strong>Trainingsart:</strong> {{ trainingsplan.trainingsart }}</p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>Erstellt am:</strong> {{ trainingsplan.erstellt_am|date('d.m.Y') }}</p>
-                    {% if trainingsplan.gueltig_bis %}
-                        <p><strong>Gültig bis:</strong> {{ trainingsplan.gueltig_bis|date('d.m.Y') }}</p>
-                    {% endif %}
-                    {% if trainingsplan.notizen %}
-                        <p><strong>Notizen:</strong> {{ trainingsplan.notizen }}</p>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <div class="row mt-3">
-                <div class="col-md-6">
-                    <p><strong>Gewicht:</strong> {{ mitglied.gewicht }} kg</p>
-                    <p><strong>Größe:</strong> {{ mitglied.groesse }} cm</p>
-                </div>
-                <div class="col-md-6">
-                    <p><strong>Geschlecht:</strong> 
-                        {% if mitglied.geschlecht == 'm' %}Männlich
-                        {% elseif mitglied.geschlecht == 'w' %}Weiblich
-                        {% else %}Divers{% endif %}
-                    </p>
-                </div>
-            </div>
-        </div>
+    <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">Trainingsplan-Informationen</h5>
+    </div>
+    <div class="card-body">
+    <div class="row">
+    <div class="col-md-6">
+    <table class="table table-borderless">
+    <tr>
+    <th>Name:</th>
+    <td>{{ trainingsplan.plan_name }}</td>
+    </tr>
+    <tr>
+    <th>Mitglied:</th>
+    <td>{{ mitglied.vorname }} {{ mitglied.nachname }}</td>
+    </tr>
+    <tr>
+    <th>Schwierigkeitsgrad:</th>
+    <td>{{ trainingsplan.schwierigkeitsgrad }}</td>
+    </tr>
+    <tr>
+    <th>Trainingsart:</th>
+    <td>{{ trainingsplan.trainingsart }}</td>
+    </tr>
+    <tr>
+    <th>Split-Typ:</th>
+    <td>{{ trainingsplan.split_typ }}</td>
+    </tr>
+    <tr>
+    <th>Trainingsdauer:</th>
+    <td>{{ trainingsplan.trainingsdauer }} Minuten</td>
+    </tr>
+    <tr>
+    <th>Trainingsumgebung:</th>
+    <td>{{ trainingsplan.trainingsumgebung }}</td>
+    </tr>
+    </table>
+    </div>
+    <div class="col-md-6">
+    <table class="table table-borderless">
+    <tr>
+    <th>Trainingshäufigkeit:</th>
+    <td>{{ trainingsplan.trainingsfrequenz }}x pro Woche</td>
+    </tr>
+    {% if trainingsplan.spezifisches_ziel %}
+    <tr>
+    <th>Spezifisches Ziel:</th>
+    <td>{{ trainingsplan.spezifisches_ziel }}</td>
+    </tr>
+    {% endif %}
+    <tr>
+    <th>Erholungszeiten:</th>
+    <td>
+    {% if trainingsplan.erholungszeit == 'Kurz' %}
+    Kurz (30-60 Sekunden)
+    {% elseif trainingsplan.erholungszeit == 'Mittel' %}
+    Mittel (90-120 Sekunden)
+    {% else %}
+    Lang (2-5 Minuten)
+    {% endif %}
+    </td>
+    </tr>
+    <tr>
+    <th>Erstellt am:</th>
+    <td>{{ trainingsplan.erstellt_am|date('d.m.Y') }}</td>
+    </tr>
+    <tr>
+    <th>Status:</th>
+    <td>
+    {% if trainingsplan.ist_aktiv %}
+    <span class="badge bg-success">Aktiv</span>
+    {% else %}
+    <span class="badge bg-secondary">Inaktiv</span>
+    {% endif %}
+    </td>
+    </tr>
+    </table>
+    </div>
     </div>
     
-    {% if maximalkraftTests is not empty %}
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">Maximalkraft-Tests</h5>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>Übung</th>
-                                <th>Datum</th>
-                                <th>Gewicht</th>
-                                <th>Wiederholungen</th>
-                                <th>1RM</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for test in maximalkraftTests %}
-                                <tr>
-                                    <td>{{ test.uebung }}</td>
-                                    <td>{{ test.test_datum|date('d.m.Y') }}</td>
-                                    <td>{{ test.gewicht }} kg</td>
-                                    <td>{{ test.wiederholungen }}</td>
-                                    <td>{{ test.berechnetes_1rm|number_format(1) }} kg</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    {% endif %}
-    
-    {% if uebungenNachTag is not empty %}
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="mb-0">Trainingsplan</h5>
-            </div>
-            <div class="card-body">
-                <ul class="nav nav-tabs" id="trainingsplanTabs" role="tablist">
-                    {% for tag, tagUebungen in uebungenNachTag %}
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link {% if loop.first %}active{% endif %}" 
-                                    id="tab-{{ tag }}" 
-                                    data-bs-toggle="tab" 
-                                    data-bs-target="#content-{{ tag }}" 
-                                    type="button" 
-                                    role="tab" 
-                                    aria-controls="content-{{ tag }}" 
-                                    aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
-                                {{ tag }}
-                            </button>
-                        </li>
-                    {% endfor %}
-                </ul>
-                
-                <div class="tab-content mt-3" id="trainingsplanTabContent">
-                    {% for tag, tagUebungen in uebungenNachTag %}
-                        <div class="tab-pane fade {% if loop.first %}show active{% endif %}" 
-                             id="content-{{ tag }}" 
-                             role="tabpanel" 
-                             aria-labelledby="tab-{{ tag }}">
-                            
-                            <div class="table-responsive">
-                                <table class="table table-bordered">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>Nr.</th>
-                                            <th>Übung</th>
-                                            <th>Muskelgruppe</th>
-                                            <th>Satz</th>
-                                            <th>Wiederholungen</th>
-                                            <th>Gewicht</th>
-                                            <th>Pause</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for uebung in tagUebungen %}
-                                            {% for detail in uebung.details %}
-                                                <tr {% if detail.satz_nummer == 1 and not loop.first %}class="border-top border-dark"{% endif %}>
-                                                    {% if detail.satz_nummer == 1 %}
-                                                        <td rowspan="{{ uebung.details|length }}">{{ uebung.reihenfolge }}</td>
-                                                        <td rowspan="{{ uebung.details|length }}">
-                                                            <strong>{{ uebung.name }}</strong>
-                                                            {% if uebung.equipment %}
-                                                                <br><small>{{ uebung.equipment }}</small>
-                                                            {% endif %}
-                                                        </td>
-                                                        <td rowspan="{{ uebung.details|length }}">{{ uebung.muskelgruppe }}</td>
-                                                    {% endif %}
-                                                    <td>{{ detail.satz_nummer }}</td>
-                                                    <td>{{ detail.wiederholungen }}</td>
-                                                    <td>
-                                                        {% if detail.gewicht_kg > 0 %}
-                                                            {{ detail.gewicht_kg }} kg
-                                                            {% if detail.gewicht_prozent %}
-                                                                <br><small>({{ detail.gewicht_prozent }}% 1RM)</small>
-                                                            {% endif %}
-                                                        {% else %}
-                                                            -
-                                                        {% endif %}
-                                                    </td>
-                                                    <td>{{ detail.pause_sekunden }} Sek.</td>
-                                                </tr>
-                                            {% endfor %}
-                                            
-                                            {% if uebung.maximalkraft_test is defined %}
-                                                <tr class="table-secondary">
-                                                    <td colspan="7">
-                                                        <small>
-                                                            <strong>Maximalkraft-Test:</strong> 
-                                                            {{ uebung.maximalkraft_test.berechnetes_1rm|number_format(1) }} kg (1RM) 
-                                                            am {{ uebung.maximalkraft_test.test_datum|date('d.m.Y') }}
-                                                        </small>
-                                                    </td>
-                                                </tr>
-                                            {% endif %}
-                                            
-                                            {% if uebung.anleitung %}
-                                                <tr class="table-light">
-                                                    <td colspan="7">
-                                                        <small>
-                                                            <strong>Anleitung:</strong> {{ uebung.anleitung }}
-                                                        </small>
-                                                    </td>
-                                                </tr>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    {% endif %}
-    
-    <div class="d-flex justify-content-between mt-4">
-        <a href="{{ backUrl }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Zurück
-        </a>
-        <div>
-            <a href="{{ editUrl }}" class="btn btn-primary">
-                <i class="fas fa-edit"></i> Bearbeiten
-            </a>
-            <a href="{{ deleteUrl }}" class="btn btn-danger" onclick="return confirm('Sind Sie sicher, dass Sie diesen Trainingsplan löschen möchten?');">
-                <i class="fas fa-trash"></i> Löschen
-            </a>
-        </div>
+    {% if trainingsplan.koerperliche_einschraenkungen %}
+    <div class="alert alert-warning mt-3">
+    <strong>Körperliche Einschränkungen:</strong> {{ trainingsplan.koerperliche_einschraenkungen }}
     </div>
+    {% endif %}
+    
+    {% if trainingsplan.notizen %}
+    <div class="alert alert-info mt-3">
+    <strong>Notizen:</strong> {{ trainingsplan.notizen }}
+    </div>
+    {% endif %}
+    
+    <div class="row mt-3">
+    <div class="col-md-12">
+    <h5>Spezielle Funktionen:</h5>
+    <div class="d-flex flex-wrap">
+    <span class="badge {% if trainingsplan.periodisierung %}bg-success{% else %}bg-secondary{% endif %} me-2 mb-2">Periodisierung</span>
+    <span class="badge {% if trainingsplan.spezielle_techniken %}bg-success{% else %}bg-secondary{% endif %} me-2 mb-2">Spezielle Techniken</span>
+    <span class="badge {% if trainingsplan.aufwaermphase %}bg-success{% else %}bg-secondary{% endif %} me-2 mb-2">Aufwärmphase</span>
+    <span class="badge {% if trainingsplan.progression %}bg-success{% else %}bg-secondary{% endif %} me-2 mb-2">Progressionsmodell</span>
+    <span class="badge {% if trainingsplan.kardio_integration %}bg-success{% else %}bg-secondary{% endif %} me-2 mb-2">Kardio-Integration</span>
+    </div>
+    </div>
+    </div>
+    
+    {% if trainingsplan.ernaehrungshinweise %}
+    <div class="mt-4">
+    <h5>Ernährungshinweise:</h5>
+    <div class="card">
+    <div class="card-body">
+    {{ trainingsplan.ernaehrungshinweise|nl2br }}
+    </div>
+    </div>
+    </div>
+    {% endif %}
+    </div>
+    </div>
+    {% if trainingsplan.debug_info is defined and trainingsplan.debug_info is not empty %}
+    <div class="alert alert-warning mt-3">
+        <strong>Hinweis:</strong> {{ trainingsplan.debug_info }}
+    </div>
+    {% endif %}
+    
+    <div class="row">
+    <div class="col-12">
+    <ul class="nav nav-tabs" id="trainingstageTabs" role="tablist">
+    {% for tag, tagUebungen in uebungenNachTag %}
+    <li class="nav-item" role="presentation">
+    <button class="nav-link {% if loop.first %}active{% endif %}" 
+    id="tab-{{ tag|lower }}" 
+    data-bs-toggle="tab" 
+    data-bs-target="#content-{{ tag|lower }}" 
+    type="button" 
+    role="tab" 
+    aria-controls="content-{{ tag|lower }}" 
+    aria-selected="{% if loop.first %}true{% else %}false{% endif %}">
+    {{ tag }} ({{ tagUebungen|length }})
+    </button>
+    </li>
+    {% endfor %}
+    </ul>
+    
+    <div class="tab-content" id="trainingstageContent">
+    {% for tag, tagUebungen in uebungenNachTag %}
+    <div class="tab-pane fade {% if loop.first %}show active{% endif %}" 
+    id="content-{{ tag|lower }}" 
+    role="tabpanel" 
+    aria-labelledby="tab-{{ tag|lower }}">
+    
+    {% if trainingsplan.aufwaermphase %}
+    <div class="alert alert-info mt-3">
+    <h5><i class="fas fa-fire"></i> Aufwärmphase (5-10 Minuten)</h5>
+    <p>Beginnen Sie mit leichtem Cardio (Laufband, Crosstrainer) und dynamischen Dehnübungen für die Muskelgruppen, die heute trainiert werden.</p>
+    </div>
+    {% endif %}
+    
+    <div class="table-responsive mt-3">
+    <table class="table table-striped table-hover">
+    <thead class="table-dark">
+    <tr>
+    <th>#</th>
+    <th>Übung</th>
+    <th>Muskelgruppe</th>
+    <th>Sätze</th>
+    <th>Wiederholungen</th>
+    <th>Gewicht</th>
+    <th>Gewicht %</th>
+    <th>Pause</th>
+    <th>Technik</th>
+    <th>Notizen</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for uebung in tagUebungen %}
+    <tr>
+    <td>{{ uebung.reihenfolge }}</td>
+    <td>
+    <strong>{{ uebung.name }}</strong>
+    {% if uebung.koerperbereich %}
+    <span class="badge bg-info">{{ uebung.koerperbereich }}</span>
+    {% endif %}
+    {% if uebung.uebungstyp %}
+    <span class="badge bg-secondary">{{ uebung.uebungstyp }}</span>
+    {% endif %}
+    {% if uebung.anleitung %}
+    <button type="button" class="btn btn-sm btn-outline-info ms-2" data-bs-toggle="modal" data-bs-target="#uebungModal{{ uebung.uebung_id }}">
+    <i class="fas fa-info-circle"></i>
+    </button>
+    {% endif %}
+    </td>
+    <td>{{ uebung.muskelgruppe }}</td>
+    <td>{{ uebung.details|length }}</td>
+    <td>
+    {% for detail in uebung.details %}
+    {% if not loop.first %}<br>{% endif %}
+    {{ detail.wiederholungen }}
+    {% endfor %}
+    </td>
+    <td>
+    {% for detail in uebung.details %}
+    {% if not loop.first %}<br>{% endif %}
+    {% if detail.gewicht_kg > 0 %}
+    {{ detail.gewicht_kg }} kg
+    {% else %}
+    -
+    {% endif %}
+    {% endfor %}
+    </td>
+    <td>
+    {% for detail in uebung.details %}
+    {% if not loop.first %}<br>{% endif %}
+    {{ detail.gewicht_prozent }}%
+    {% endfor %}
+    </td>
+    <td>
+    {% for detail in uebung.details %}
+    {% if not loop.first %}<br>{% endif %}
+    {% if detail.pause_sekunden >= 60 %}
+    {{ (detail.pause_sekunden / 60)|round(1, 'floor') }}:{{ detail.pause_sekunden % 60 }} min
+    {% else %}
+    {{ detail.pause_sekunden }} sek
+    {% endif %}
+    {% endfor %}
+    </td>
+    <td>
+    {% for detail in uebung.details %}
+    {% if not loop.first %}<br>{% endif %}
+    {% if detail.technik != 'Normal' %}
+    <span class="badge bg-warning text-dark">{{ detail.technik }}</span>
+    {% else %}
+    Standard
+    {% endif %}
+    {% endfor %}
+    </td>
+    <td>
+    {% for detail in uebung.details %}
+    {% if not loop.first %}<br>{% endif %}
+    {{ detail.notizen }}
+    {% endfor %}
+    </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+    </div>
+    
+    {% if trainingsplan.kardio_integration %}
+    <div class="alert alert-success mt-3">
+    <h5><i class="fas fa-running"></i> Kardio-Einheit (15-20 Minuten)</h5>
+    <p>Nach dem Krafttraining empfehlen wir eine moderate Kardio-Einheit auf dem Laufband, Crosstrainer oder Fahrradergometer.</p>
+    </div>
+    {% endif %}
+    </div>
+    {% endfor %}
+    </div>
+    </div>
+    </div>
+    
+    {% if trainingsplan.progression %}
+    <div class="card mt-4">
+    <div class="card-header bg-success text-white">
+    <h5 class="mb-0">Progressionsmodell</h5>
+    </div>
+    <div class="card-body">
+    <p>Für optimale Fortschritte empfehlen wir folgende Progression:</p>
+    <ul>
+    <li><strong>Woche 1-2:</strong> Eingewöhnung mit den angegebenen Gewichten</li>
+    <li><strong>Woche 3-4:</strong> Steigerung des Gewichts um 5-10% bei gleichbleibenden Wiederholungen</li>
+    <li><strong>Woche 5-6:</strong> Erhöhung der Wiederholungen um 1-2 pro Satz</li>
+    <li><strong>Woche 7-8:</strong> Erneute Gewichtssteigerung um 5-10% und Rückkehr zu den ursprünglichen Wiederholungszahlen</li>
+    </ul>
+    <p class="mb-0">Passen Sie die Progression an Ihre individuellen Fortschritte an. Bei Stagnation oder Überforderung kontaktieren Sie bitte Ihren Trainer.</p>
+    </div>
+    </div>
+    {% endif %}
+    
+    {% if trainingsplan.periodisierung %}
+    <div class="card mt-4">
+    <div class="card-header bg-info text-white">
+    <h5 class="mb-0">Periodisierungsplan</h5>
+    </div>
+    <div class="card-body">
+    <div class="table-responsive">
+    <table class="table table-bordered">
+    <thead>
+    <tr>
+    <th>Phase</th>
+    <th>Dauer</th>
+    <th>Intensität</th>
+    <th>Volumen</th>
+    <th>Fokus</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td>Adaptionsphase</td>
+    <td>2 Wochen</td>
+    <td>Niedrig (60-70%)</td>
+    <td>Mittel</td>
+    <td>Technik und Gewöhnung</td>
+    </tr>
+    <tr>
+    <td>Aufbauphase</td>
+    <td>4 Wochen</td>
+    <td>Mittel (70-80%)</td>
+    <td>Hoch</td>
+    <td>Muskelaufbau und Kraftsteigerung</td>
+    </tr>
+    <tr>
+    <td>Intensivphase</td>
+    <td>3 Wochen</td>
+    <td>Hoch (80-90%)</td>
+    <td>Mittel</td>
+    <td>Maximalkraft und Leistungssteigerung</td>
+    </tr>
+    <tr>
+    <td>Erholungsphase</td>
+    <td>1 Woche</td>
+    <td>Niedrig (50-60%)</td>
+    <td>Niedrig</td>
+    <td>Regeneration und Vorbereitung auf neuen Zyklus</td>
+    </tr>
+    </tbody>
+    </table>
+    </div>
+    </div>
+    </div>
+    {% endif %}
 </div>
+
+<!-- Übungs-Modals -->
+{% for tag, tagUebungen in uebungenNachTag %}
+    {% for uebung in tagUebungen %}
+    {% if uebung.anleitung %}
+    <div class="modal fade" id="uebungModal{{ uebung.uebung_id }}" tabindex="-1" aria-labelledby="uebungModalLabel{{ uebung.uebung_id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+    <div class="modal-header">
+    <h5 class="modal-title" id="uebungModalLabel{{ uebung.uebung_id }}">{{ uebung.name }}</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+    <div class="row">
+    <div class="col-md-6">
+    <h6>Ausführung:</h6>
+    <p>{{ uebung.anleitung|nl2br }}</p>
+    
+    {% if uebung.sicherheitshinweise %}
+    <h6 class="mt-3">Sicherheitshinweise:</h6>
+    <p>{{ uebung.sicherheitshinweise|nl2br }}</p>
+    {% endif %}
+    </div>
+    <div class="col-md-6">
+    {% if uebung.video_url %}
+    <div class="ratio ratio-16x9">
+    <iframe src="{{ uebung.video_url }}" title="{{ uebung.name }}" allowfullscreen></iframe>
+    </div>
+    {% else %}
+    <div class="alert alert-secondary">
+    <p class="mb-0">Kein Video verfügbar</p>
+    </div>
+    {% endif %}
+    </div>
+    </div>
+    </div>
+    <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Schließen</button>
+    </div>
+    </div>
+    </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+{% endfor %}
 {% endblock %}

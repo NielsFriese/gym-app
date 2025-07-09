@@ -1,11 +1,161 @@
 {% extends "layout.twig" %}
 
 {% block content %}
-    <div class="jumbotron">
-        <h1>{{ message }}</h1>
-        <p class="lead">Verwalten Sie Ihre Mitglieder, Kurse und Trainingseinheiten.</p>
-        <hr class="my-4">
-        <p>Klicken Sie unten, um mit der Mitgliederverwaltung zu beginnen.</p>
-        <a class="btn btn-primary btn-lg" href="{{ url_for('mitglieder-liste') }}" role="button">Mitglieder verwalten</a>
+<style>
+    :root {
+        --dark-bg: #1a1a2e;
+        --primary-color: #0f3460;
+        --secondary-color: #e94560;
+        --light-text: #f0f0f0;
+        --card-bg: #16213e;
+        --border-radius: 12px;
+    }
+
+    body {
+        background-color: var(--dark-bg);
+        color: var(--light-text);
+    }
+
+    .welcome-banner {
+        background: linear-gradient(135deg, var(--primary-color), var(--dark-bg));
+        padding: 3rem 2rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 2.5rem;
+        text-align: center;
+    }
+
+    .welcome-banner h1 {
+        font-weight: 700;
+        font-size: 2.8rem;
+    }
+
+    .welcome-banner p {
+        font-size: 1.2rem;
+        opacity: 0.8;
+    }
+
+    .quick-action-card {
+        background-color: var(--card-bg);
+        border: 1px solid var(--primary-color);
+        border-radius: var(--border-radius);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        padding: 1.5rem;
+        text-align: center;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .quick-action-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .quick-action-card .icon {
+        font-size: 3rem;
+        color: var(--secondary-color);
+        margin-bottom: 1rem;
+    }
+
+    .quick-action-card h5 {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+    
+    .quick-action-card p {
+        font-size: 0.9rem;
+        opacity: 0.7;
+    }
+
+    .section-title {
+        text-align: center;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        font-size: 1.8rem;
+        letter-spacing: 1px;
+    }
+
+    .stats-card {
+        background-color: var(--card-bg);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        text-align: center;
+    }
+
+    .stats-card .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+    }
+
+    .stats-card .stat-label {
+        font-size: 1rem;
+        opacity: 0.8;
+    }
+
+</style>
+
+<div class="container-fluid">
+    <div class="welcome-banner">
+        <h1 class="display-4">Willkommen zurück, Admin!</h1>
+        <p class="lead">Dein zentrales Dashboard für das Studiomanagement.</p>
     </div>
+
+    <!-- Quick Actions -->
+    <h2 class="section-title">Schnellzugriff</h2>
+    <div class="row mb-5">
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('mitglieder-liste') }}" class="text-decoration-none text-light">
+                <div class="quick-action-card">
+                    <div class="icon"><i class="fas fa-users"></i></div>
+                    <h5>Mitglieder verwalten</h5>
+                    <p>Profile anzeigen, bearbeiten und neue Mitglieder hinzufügen.</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 mb-4">
+             <a href="{{ url_for('kurse-liste') }}" class="text-decoration-none text-light">
+                <div class="quick-action-card">
+                    <div class="icon"><i class="fas fa-dumbbell"></i></div>
+                    <h5>Kurse organisieren</h5>
+                    <p>Kurspläne erstellen, bearbeiten und die Auslastung prüfen.</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4 mb-4">
+            <a href="{{ url_for('trainingsplan-liste') }}" class="text-decoration-none text-light">
+                <div class="quick-action-card">
+                    <div class="icon"><i class="fas fa-clipboard-list"></i></div>
+                    <h5>Trainingspläne</h5>
+                    <p>Individuelle Pläne für Mitglieder generieren und verwalten.</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Gym Activity Overview -->
+    <h2 class="section-title">Studio-Aktivität</h2>
+    <div class="row mb-5">
+        <div class="col-md-4 mb-3">
+            <div class="stats-card">
+                <div class="stat-number">142</div>
+                <div class="stat-label">Aktive Mitglieder</div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stats-card">
+                <div class="stat-number">8</div>
+                <div class="stat-label">Laufende Kurse</div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stats-card">
+                <div class="stat-number">23</div>
+                <div class="stat-label">Check-ins heute</div>
+            </div>
+        </div>
+    </div>
+
+</div>
 {% endblock %}
